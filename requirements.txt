@@ -1,0 +1,7 @@
+git+https://github.com/jeremija/python3-svmlight
+gensim
+scikit-learn
+adapt
+numpy
+pandas
+matlpotlib
