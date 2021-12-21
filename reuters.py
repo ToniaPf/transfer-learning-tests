@@ -19,18 +19,18 @@ from nltk.corpus import stopwords
 # data input
 from common_adapt import run_experiment_adapt
 # from common_toolkit import run_experiment_toolkit
-from svm_light_transfer import SVMLight
+# from svm_light_transfer import SVMLight
 from common_toolkit import run_experiment_toolkit
 
-csv_file = f'reuters_{datetime.now().strftime("%Y%m%d%H%M%S")}.csv'
+csv_file = f'reuters_adapt_{datetime.now().strftime("%Y%m%d%H%M%S")}.csv'
 
 with open(csv_file, 'w') as f:
     writer = csv.writer(f)
     writer.writerow(['Estimator', 'Ratio', 'Test-Type', 'Accuracy'])
 
 
-source = arff.loadarff("./PeoplePlaces.src.arff")
-target = arff.loadarff("./PeoplePlaces.tar.arff")
+source = arff.loadarff(r"..\reuters\PeoplePlaces.src.arff")
+target = arff.loadarff(r"..\reuters\PeoplePlaces.tar.arff")
 
 df_source = pd.DataFrame(source[0])
 df_target = pd.DataFrame(target[0])
@@ -57,24 +57,24 @@ y_target_test = np.array(df_target_test['class'].astype(int))
 
 
 estimators = [
-    ('dtreegini', DecisionTreeClassifier, dict(max_features="log2", splitter="random", criterion="gini")),
-    ('dtree5', DecisionTreeClassifier, dict(max_depth=5, random_state=1),),
-    ('dtree10', DecisionTreeClassifier, dict(max_depth=10, random_state=1)),
-    ('gnb', GaussianNB, dict()),
-    # ('lsvc', NaivelyCalibratedLinearSVC, dict()),
-    ('lr', LogisticRegression, dict()),
-    ('svmlight', SVMLight, dict(type="classification", kernel="linear"))
+    # ('dtreegini', DecisionTreeClassifier(max_features="log2", splitter="random", criterion="gini")),
+    # ('dtree5', DecisionTreeClassifier(max_depth=5, random_state=1),),
+    # ('dtree10', DecisionTreeClassifier(max_depth=10, random_state=1)),
+    # ('gnb', GaussianNB()),
+    # ('lsvc', NaivelyCalibratedLinearSVC()),
+    ('lr', LogisticRegression()),
+    # ('svmlight', SVMLight(type="classification", kernel="linear"))
 ]
 
 
 tradaboost_n_estimators = [50]
 kmm_kernels = ['linear', 'rbf', 'poly']  # adapt
-run_tradaboost = True  # both
-run_fe = True  # adapt
-run_coral = False  # adapt
-run_msda = False  # both
-run_regular_transfer = False  # adapt
-run_kmm = False  # adapt
+run_tradaboost = False  # both
+run_fe = False  # adapt
+run_coral = True  # adapt
+run_msda = True  # both
+run_regular_transfer = True  # adapt
+run_kmm = True  # adapt
 
 for ratio in [0.01, 0.02, 0.03, 0.04, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5]:
 
