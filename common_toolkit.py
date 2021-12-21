@@ -48,16 +48,16 @@ def run_experiment_toolkit(
                 x_target_train_v = x_target_train
                 x_target_test_v = x_target_test
 
-            for (name, base_estimator, kwargs) in estimators:
+            for (name, base_estimator) in estimators:
 
                 ## Test1 --> Train Source // Test target ###
-                est = base_estimator(**kwargs)
+                est = copy.copy(base_estimator)
                 est.fit(x_source_v, y_source)
                 preds1 = est.predict(x_target_test_v)
                 writer.writerow([f'{name}', str(ratio), 'test1', 100 * accuracy_score(y_target_test, preds1)])
 
                 ## Test2 --> Train source+target --> Test target ###
-                est = base_estimator(**kwargs)
+                est = copy.copy(base_estimator)
                 est.fit(x_source_v, y_source)
                 both_x_train = np.concatenate((x_target_train_v, x_source_v), axis=0)
                 both_y_train = np.concatenate((y_target_train, y_source), axis=0)
@@ -66,14 +66,14 @@ def run_experiment_toolkit(
                 writer.writerow([f'{name}', str(ratio), 'test2', 100 * accuracy_score(y_target_test, preds2)])
 
                 ## Test3 --> Train target --> Test target ###
-                est = base_estimator(**kwargs)
+                est = copy.copy(base_estimator)
                 est.fit(x_target_train_v, y_target_train)
                 preds3 = est.predict(x_target_test_v)
                 writer.writerow([f'{name}', str(ratio), 'test3', 100 * accuracy_score(y_target_test, preds3)])
 
                 class MyTrAdaBoost(TrAdaBoost):
                     def train_classify(self, trans_data, trans_label, test_data, P):
-                        clf = base_estimator(**kwargs)
+                        clf = copy.copy(base_estimator)
                         clf.fit(trans_data, trans_label, sample_weight=P[:, 0])
                         return clf.predict(test_data)
 
